@@ -7,6 +7,10 @@ services:
       dockerfile: mvc-module/Dockerfile
     ports:
       - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    depends_on:
+      - redis
 
   webflux-module:
     build:
@@ -14,3 +18,12 @@ services:
       dockerfile: webflux-module/Dockerfile
     ports:
       - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
