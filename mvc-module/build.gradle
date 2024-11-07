@@ -9,3 +9,11 @@ dependencies {
     implementation 'org.springframework.integration:spring-integration-core'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
+
+bootJar {
+    enabled = true
+}
+
+jar {
+    enabled = false
+}

@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  mvc-module:
+    build:
+      context: .
+      dockerfile: mvc-module/Dockerfile
+    ports:
+      - "8081:8081"
+
+  webflux-module:
+    build:
+      context: .
+      dockerfile: webflux-module/Dockerfile
+    ports:
+      - "8082:8082"

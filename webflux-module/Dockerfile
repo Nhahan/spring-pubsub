@@ -1,6 +1,6 @@
 FROM openjdk:17-jdk-slim
 
-COPY build/libs/webflux-module.jar app.jar
+COPY build/libs/webflux-module-*.jar app.jar
 
 EXPOSE 8082
 
