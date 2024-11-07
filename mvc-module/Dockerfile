@@ -1,6 +1,6 @@
 FROM openjdk:17-jdk-slim
 
-COPY build/libs/mvc-module-*.jar app.jar
+COPY mvc-module/build/libs/*.jar app.jar
 
 EXPOSE 8081
 
