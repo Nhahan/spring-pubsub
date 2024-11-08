@@ -3,8 +3,13 @@ plugins {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-webflux'
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
+    implementation 'com.squareup.okhttp3:okhttp:4.11.0'
+    implementation 'jakarta.annotation:jakarta.annotation-api:2.1.1'
+
+    // OkHttp EventSource (LaunchDarkly)
+    implementation 'com.launchdarkly:okhttp-eventsource:2.5.0'
 }
 
 bootJar {

@@ -1,7 +1,7 @@
 FROM openjdk:17-jdk-slim
 
-COPY mvc-module/build/libs/*.jar app.jar
+COPY test-module/build/libs/*.jar app.jar
 
-EXPOSE 8081
+EXPOSE 8080
 
 ENTRYPOINT ["java", "-jar", "/app.jar"]

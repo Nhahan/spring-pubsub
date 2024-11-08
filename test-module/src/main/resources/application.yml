@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 8080
 
 spring:
   data:
@@ -8,3 +8,7 @@ spring:
       port: 6379
   websocket:
     allowed-origins: "*"
+
+app:
+  mvc-url: http://localhost:8081/topics/test/subscribe
+  webflux-url: http://localhost:8082/topics/test/subscribe

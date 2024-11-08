@@ -3,16 +3,18 @@ package org.example.testmodule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
 @RequiredArgsConstructor
+@RestController
 public class TestController {
 
-    private final TestService testService;
+    private final SseClientService sseClientService;
 
-    @GetMapping("/test/{messageCount}")
-    public String comparePerformance(@PathVariable int messageCount) {
-        return testService.comparePerformance(messageCount);
+    @GetMapping("/topics/{topic}/test")
+    public String test(@PathVariable String topic, @RequestParam int messageCount) throws InterruptedException {
+        sseClientService.start(topic, messageCount);
+        return sseClientService.getDurations();
     }
 }
