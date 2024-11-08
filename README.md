@@ -1,6 +1,6 @@
 # Spring Pub/Sub Testing Project
 
-This project aims to validate the functionality and compare the performance of Server-Sent Events (SSE) and WebSocket-based APIs using both a traditional Spring MVC approach and a reactive WebFlux-based approach. Redis Pub/Sub is used as a message broker to distribute messages between these components.
+This project validates functionality and compares performance of Server-Sent Events (SSE) and WebSocket APIs using Spring MVC and reactive WebFlux, with Redis Pub/Sub as the message broker.
 
 ## Prerequisites
 
@@ -60,15 +60,15 @@ Each stage involves publishing a set number of messages to the topic and recordi
 
 | Stage | Number of Messages | `mvc-module` Total Consumption Time (s) | `webflux-module` Total Consumption Time (s) |
 |-------|--------------------|-----------------------------------------|---------------------------------------------|
-| 1     | 1000               | 0.481                                   | 0.295                                       |
-| 2     | 5000               | 0.830                                   | 0.421                                       |
-| 3     | 10000              | 2.127                                   | 0.934                                       |
-| 4     | 50000              | 7.130                                   | 2.372                                       |
-| 5     | 100000             | 12.847                                  | 4.137                                       |
-| 6     | 500000             | 69.808                                  | 24.844                                      |
-| 7     | 1000000            | `java.io.IOException: Broken pipe`      | 42.323                                      |
-| 8     | 5000000            | `java.io.IOException: Broken pipe`      | 197.264                                     |
-| 9     | 10000000           | `java.io.IOException: Broken pipe`      | 446.924                                     |
+| 1     | 1,000              | 0.481                                   | 0.295                                       |
+| 2     | 5,000              | 0.830                                   | 0.421                                       |
+| 3     | 10,000             | 2.127                                   | 0.934                                       |
+| 4     | 50,000             | 7.130                                   | 2.372                                       |
+| 5     | 100,000            | 12.847                                  | 4.137                                       |
+| 6     | 500,000            | 69.808                                  | 24.844                                      |
+| 7     | 1,000,000          | `java.io.IOException: Broken pipe`      | 42.323                                      |
+| 8     | 5,000,000          | `java.io.IOException: Broken pipe`      | 197.264                                     |
+| 9     | 10,000,000         | `java.io.IOException: Broken pipe`      | 446.924                                     |
 
 > **Note**: Measured on an M1 Pro base model.
 
