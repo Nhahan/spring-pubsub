@@ -52,7 +52,7 @@ This project aims to validate the functionality and compare the performance of S
 - **Performance Test**: This evaluates response times and the reliability of both `mvc-module` and `webflux-module` SSE implementations under high traffic conditions, helping to understand their relative performance.
 
 ## Performance Comparison: MVC vs. WebFlux
-This compares `mvc-module` and `webflux-module` on **total message consumption time** across different message counts via **SSE**.
+This compares `mvc-module` and `webflux-module` on **total message consumption time** across different message counts via $\textbf{\normalsize{\color{#D32F2F}SSE}}$.
 
 ### Test Stages and Expected Metrics
 
