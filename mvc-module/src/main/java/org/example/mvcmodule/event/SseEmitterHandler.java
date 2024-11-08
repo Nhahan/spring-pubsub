@@ -5,8 +5,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,21 +15,22 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SseEmitterHandler {
 
     private final StringRedisTemplate redisTemplate;
-
     private final Map<String, Set<SseEmitter>> emittersPerTopic = new ConcurrentHashMap<>();
 
     public SseEmitter addEmitter(String topic) {
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
-
-        emittersPerTopic.computeIfAbsent(topic, key -> ConcurrentHashMap.newKeySet()).add(emitter);
+        emittersPerTopic.computeIfAbsent(topic, key -> Collections.newSetFromMap(new ConcurrentHashMap<>())).add(emitter);
 
         emitter.onCompletion(() -> removeEmitter(topic, emitter));
         emitter.onTimeout(() -> removeEmitter(topic, emitter));
         emitter.onError(e -> removeEmitter(topic, emitter));
 
-        redisTemplate.opsForSet().add("subscribe:" + topic, String.valueOf(emitter.hashCode()));
-
+        registerEmitterInRedis(topic, emitter);
         return emitter;
+    }
+
+    private void registerEmitterInRedis(String topic, SseEmitter emitter) {
+        redisTemplate.opsForSet().add("subscribe:" + topic, String.valueOf(emitter.hashCode()));
     }
 
     private void removeEmitter(String topic, SseEmitter emitter) {
@@ -43,20 +43,19 @@ public class SseEmitterHandler {
         }
     }
 
-    public void sendMessageToTopic(String topic, String data) {
+    public void broadcast(String topic, String data) {
         Set<SseEmitter> emitters = emittersPerTopic.get(topic);
         if (emitters != null) {
-            List<SseEmitter> deadEmitters = new ArrayList<>();
-            for (SseEmitter emitter : emitters) {
-                try {
-                    emitter.send(SseEmitter.event()
-                            .name("message")
-                            .data(data));
-                } catch (Exception e) {
-                    deadEmitters.add(emitter);
-                }
-            }
-            deadEmitters.forEach(emitters::remove);
+            emitters.removeIf(emitter -> !sendEvent(emitter, data));
+        }
+    }
+
+    private boolean sendEvent(SseEmitter emitter, String data) {
+        try {
+            emitter.send(SseEmitter.event().name("message").data(data));
+            return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 }

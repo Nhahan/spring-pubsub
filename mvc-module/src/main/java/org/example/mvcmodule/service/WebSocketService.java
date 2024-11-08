@@ -32,7 +32,6 @@ public class WebSocketService {
     }
 
     private void subscribeToTopic(WebSocketSession session, String topic) {
-        webSocketHandler.addSession(session);
         webSocketHandler.registerSessionTopic(session, topic);
         webSocketListener.subscribeToTopic(topic);
     }

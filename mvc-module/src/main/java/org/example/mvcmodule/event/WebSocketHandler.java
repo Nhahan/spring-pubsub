@@ -16,7 +16,6 @@ import java.util.concurrent.CopyOnWriteArraySet;
 public class WebSocketHandler {
 
     private final StringRedisTemplate redisTemplate;
-
     private final Set<WebSocketSession> sessions = new CopyOnWriteArraySet<>();
 
     public void addSession(WebSocketSession session) {
@@ -25,35 +24,55 @@ public class WebSocketHandler {
 
     public void removeSession(WebSocketSession session) {
         sessions.remove(session);
-        redisTemplate.delete("session:" + session.getId() + ":topic");
+        removeSessionTopicFromRedis(session);
     }
 
     public void registerSessionTopic(WebSocketSession session, String topic) {
-        redisTemplate.opsForValue().set("session:" + session.getId() + ":topic", topic);
+        redisTemplate.opsForValue().set(getSessionTopicKey(session), topic);
     }
 
     public void sendMessageToTopic(WebSocketSession session, String payload) {
-        String topic = redisTemplate.opsForValue().get("session:" + session.getId() + ":topic");
+        String topic = getSessionTopic(session);
         if (topic == null) {
-            throw new IllegalStateException("No topic found for session " + session.getId());
+            log.warn("No topic found for session {}", session.getId());
+            return;
         }
-
         redisTemplate.convertAndSend(topic, payload);
     }
 
     public void broadcast(String message, String topic) {
         TextMessage textMessage = new TextMessage(message);
-        for (WebSocketSession session : sessions) {
-            String sessionTopic = redisTemplate.opsForValue().get("session:" + session.getId() + ":topic");
-            if (sessionTopic != null && sessionTopic.equals(topic)) {
-                try {
-                    if (session.isOpen()) {
-                        session.sendMessage(textMessage);
-                    }
-                } catch (Exception e) {
-                    log.error("Error sending message to session {}: {}", session.getId(), e.getMessage());
-                }
+        sessions.forEach(session -> {
+            if (isSessionSubscribedToTopic(session, topic)) {
+                sendMessageToSession(session, textMessage);
             }
+        });
+    }
+
+    private void sendMessageToSession(WebSocketSession session, TextMessage message) {
+        try {
+            if (session.isOpen()) {
+                session.sendMessage(message);
+            }
+        } catch (Exception e) {
+            log.error("Error sending message to session {}: {}", session.getId(), e.getMessage());
         }
+    }
+
+    private String getSessionTopic(WebSocketSession session) {
+        return redisTemplate.opsForValue().get(getSessionTopicKey(session));
+    }
+
+    private boolean isSessionSubscribedToTopic(WebSocketSession session, String topic) {
+        String sessionTopic = getSessionTopic(session);
+        return sessionTopic != null && sessionTopic.equals(topic);
+    }
+
+    private void removeSessionTopicFromRedis(WebSocketSession session) {
+        redisTemplate.delete(getSessionTopicKey(session));
+    }
+
+    private String getSessionTopicKey(WebSocketSession session) {
+        return "session:" + session.getId() + ":topic";
     }
 }

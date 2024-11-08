@@ -18,7 +18,7 @@ public class SseListener implements MessageListener {
     public void onMessage(Message message, byte[] pattern) {
         String topic = new String(message.getChannel());
         String data = new String(message.getBody());
-        sseEmitterHandler.sendMessageToTopic(topic, data);
+        sseEmitterHandler.broadcast(topic, data);
     }
 
     public void subscribeToTopic(String topic) {

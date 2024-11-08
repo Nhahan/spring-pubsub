@@ -7,7 +7,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.springframework.integration:spring-integration-core'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 bootJar {
